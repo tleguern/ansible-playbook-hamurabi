@@ -1,0 +1,9 @@
+---
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Initialize the game.
+      include_tasks: init.yml
+
+    - include_tasks: hamurabi-tasks.yml
