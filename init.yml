@@ -1,0 +1,14 @@
+---
+- name: Initialize important variables.
+  set_fact:
+    year: 0
+    starved: 0
+    migrants: 5
+    population: 95
+    acres: 1000
+    give: 3 # yield is a reserved word
+    rats: 200
+    bushels: 2800
+    landrate: 0
+    plague: false
+    planted: 0

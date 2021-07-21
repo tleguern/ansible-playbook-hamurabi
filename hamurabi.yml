@@ -6,4 +6,9 @@
     - name: Initialize the game.
       include_tasks: init.yml
 
+    - debug:
+        msg: |
+          Try your hand at governing Ancient Sumeria
+          successfully for a 10 years term of office.
+
     - include_tasks: hamurabi-tasks.yml

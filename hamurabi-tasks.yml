@@ -1,1 +1,101 @@
 ---
+- name: Was there a plague during the year?
+  set_fact:
+    plague: "{{ item }}"
+  with_random_choice:
+    - yes
+    - no
+
+# Calculate effect of plague here.
+
+- name: Welcome the migrants.
+  set_fact:
+    population: "{{ population|int + migrants|int }}"
+
+- name: Adjust landrate.
+  set_fact:
+    #landrate: "{{ 17 + (10|random) }}"
+    landrate: 17
+
+- debug:
+    msg: |
+      Hamurabi: I beg to report to you,
+      in year {{ year }}, {{ starved }} people starved {{ migrants }} came to the city.
+      {% if plague %}
+      A horrible plague struck! Many people have died!
+      {% endif %}
+
+      Population is now {{ population }}
+      The city now owns {{ acres }} acres
+      You have harvested {{ give }} bushels per acre.
+      Rats ate {{ rats }} bushels.
+
+      You now have {{ bushels }} bushels in store.
+
+      Land is trading at {{ landrate }} bushels per acre.
+      How many acres do you wish to buy?
+
+- name: Reset some counters.
+  set_fact:
+    starved: 0
+    migrants: 0
+    buy: 0
+    sell: 0
+    feed: 0
+    plant: 0
+    planted: 0
+
+- include_tasks: buy-acres.yml
+
+- include_tasks: sell-acres.yml
+  when: buy.user_input == 0
+
+- include_tasks: feed-people.yml
+
+- include_tasks: plant-seed.yml
+
+- name: Adjust bushels.
+  set_fact:
+    bushels: "{{ acres|int * landrate|int - rats|int }}"
+
+#- fail:
+#    msg: "You starved {{ starved }} people in one year!"
+#  when: "starved|int > population|int * 45 / 100"
+
+- name: Evacuate the corpses of the famished outside the city wall.
+  set_fact:
+    population: "{{ population|int - starved|int }}"
+
+- name: Count the number of freshly made citizens at the end of the year.
+  set_fact:
+    babies: "{{ (population|int / 2)|int }}"
+
+- name: Open the maternities gates.
+  set_fact:
+    population: "{{ population|int + babies|int }}"
+
+- name: Register the migrants.
+  set_fact:
+    #migrants: "{{ (10 * (population|int|random(start=1)) / 100)|int }}"
+    migrants: 5
+
+- name: Count the number of crops eaten by those damned rats.
+  set_fact:
+    #rats: "{{ bushels|int / 6|random(start=1) + 2 }}"
+    rats: 200
+
+- name: Start a new year.
+  set_fact:
+    year: "{{ year|int + 1}}"
+
+- name: Calculate new yield.
+  set_fact:
+    #give: "{{ [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]|random }}"
+    give: 5
+
+- name: Harvest crops.
+  set_fact:
+    bushels: "{{ bushels|int + give|int * planted|int }}"
+
+- include_tasks: hamurabi-tasks.yml
+  when: year != 11

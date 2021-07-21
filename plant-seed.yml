@@ -1,0 +1,54 @@
+---
+- pause:
+    prompt: |
+      How many acres do you wish to plant with seed?
+      MAX {{ population|int * 10 }} acres.
+  register: plant
+
+- name: Check user input for stupid answers.
+  fail:
+    msg: |
+      Hamurabi: I cannot do what you wish.
+      Get yourself another steward!
+  when:
+    - plant.user_input is not integer
+    - plant.user_input|int < 0
+
+- name: Nope.
+  debug:
+    msg: "Hamurabi: Think again. You have only {{ acres }} acres."
+  when:
+    - plant.user_input|int > acres|int
+    - plant.user_input|int <= 10 * population|int
+    - plant.user_input|int <= bushels|int
+
+- name: Nope.
+  debug:
+    msg: "Hamurabi: Think again. You have only {{ population }} people to tend the fields."
+  when:
+    - plant.user_input|int <= acres|int
+    - plant.user_input|int > 10 * population|int
+    - plant.user_input|int <= bushels|int
+
+- name: Nope.
+  debug:
+    msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
+  when:
+    - plant.user_input|int <= acres|int
+    - plant.user_input|int <= 10 * population|int
+    - plant.user_input|int > bushels|int
+
+- name: Try again Hamurabi.
+  include_tasks: plant-seed.yml
+  when: plant.user_input|int > acres|int
+        or plant.user_input|int > 10 * population|int
+        or plant.user_input|int > bushels|int
+
+- name: Plant the seeds.
+  set_fact:
+    bushels: "{{ bushels|int - feed.user_input|int }}"
+    planted: "{{ feed.user_input|int }}"
+  when:
+    - plant.user_input|int <= acres|int
+    - plant.user_input|int <= 10 * population|int
+    - plant.user_input|int <= bushels|int

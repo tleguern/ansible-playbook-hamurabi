@@ -1,0 +1,37 @@
+---
+- name: How many acres do you wish to buy?
+  pause:
+    prompt: "How many acres do you wish to buy?"
+  register: buy
+
+- name: Check user input for stupid answers.
+  fail:
+    msg: |
+      Hamurabi: I cannot do what you wish.
+      Get yourself another steward!
+  when:
+    - buy.user_input is not integer
+    - buy.user_input|int < 0
+
+- name: Calculate total price.
+  set_fact:
+    price: "{{ landrate|int * buy.user_input|int }}"
+
+- name: Nope.
+  debug:
+    msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
+  when: price|int > bushels|int
+
+- name: Try again Hamurabi.
+  include_tasks: buy-acres.yml
+  when: price|int > bushels|int
+
+- block:
+    - name: Pay the landlords in bushels.
+      set_fact:
+        bushels: "{{ bushels|int - price|int }}"
+
+    - name: And grab their land.
+      set_fact:
+        acres: "{{ acres|int + buy.user_input|int }}"
+  when: price|int <= bushels|int
