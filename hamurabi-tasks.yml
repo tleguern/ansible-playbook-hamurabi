@@ -48,7 +48,7 @@
 - include_tasks: buy-acres.yml
 
 - include_tasks: sell-acres.yml
-  when: buy.user_input == 0
+  when: action.user_input == 0
 
 - include_tasks: feed-people.yml
 

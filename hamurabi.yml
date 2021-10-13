@@ -2,6 +2,8 @@
 - hosts: localhost
   gather_facts: no
   connection: local
+  vars:
+    interactive: yes
   tasks:
     - name: Initialize the game.
       include_tasks: init.yml
