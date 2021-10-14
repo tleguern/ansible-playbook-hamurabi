@@ -2,14 +2,7 @@
 - include_tasks: action-buy.yml
   when: interactive
 
-- name: Check user input for stupid answers.
-  fail:
-    msg: |
-      Hamurabi: I cannot do what you wish.
-      Get yourself another steward!
-  register: action_error
-  when: action.user_input is string
-        or action.user_input|int < 0
+- include_tasks: user-input-check.yml
 
 - name: Calculate total price.
   set_fact:

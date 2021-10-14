@@ -11,36 +11,6 @@
       set_fact:
         landrate: 20
 
-    - name: Give the order to buy foobar acres of land.
-      set_fact:
-        action: { "user_input": "foobar" }
-    - block:
-        - include_tasks: ../../buy-acres.yml
-      rescue:
-        - name: The game correctly detected foobar as an error.
-          assert:
-            that: action_error.failed
-    - assert:
-        that:
-          - acres|int == 1000
-          - bushels|int == 2800
-          - population|int == 95
-
-    - name: Give the order to buy -100 acres of land.
-      set_fact:
-        action: { "user_input": -100 }
-    - block:
-        - include_tasks: ../../buy-acres.yml
-      rescue:
-        - name: The game correctly detected -100 as an error.
-          assert:
-            that: action_error.failed
-    - assert:
-        that:
-          - acres|int == 1000
-          - bushels|int == 2800
-          - population|int == 95
-
     - name: Give the order to buy 0 acres of land.
       set_fact:
         action: { "user_input": 0 }

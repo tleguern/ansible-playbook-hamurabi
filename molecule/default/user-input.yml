@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no
+  tasks:
+    - name: Submit the value foobar as an input.
+      set_fact:
+        action: { "user_input": "foobar" }
+    - block:
+        - include_tasks: ../../user-input-check.yml
+      rescue:
+        - name: The game correctly detected foobar as an error.
+          assert:
+            that: action_error.failed
+
+    - name: Submit the value -100 as an input.
+      set_fact:
+        action: { "user_input": -100 }
+    - block:
+        - include_tasks: ../../user-input-check.yml
+      rescue:
+        - name: The game correctly detected -100 as an error.
+          assert:
+            that: action_error.failed
+
+    - name: Submit the value 0 as an input.
+      set_fact:
+        action: { "user_input": 0 }
+    - block:
+        - include_tasks: ../../user-input-check.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "0 is a correct value"
+
+    - name: Submit the value 42 as an input.
+      set_fact:
+        action: { "user_input": 42 }
+    - block:
+        - include_tasks: ../../user-input-check.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "42 is a correct value"
