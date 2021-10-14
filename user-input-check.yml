@@ -5,5 +5,4 @@
       Hamurabi: I cannot do what you wish.
       Get yourself another steward!
   register: action_error
-  when: action.user_input is string
-        or action.user_input|int < 0
+  when: action.user_input is not regex("^[0-9]+$")
