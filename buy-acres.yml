@@ -21,10 +21,12 @@
     - price|int > bushels|int
     - interactive
 
-- name: Pay the landlords in bushels.
-  set_fact:
-    bushels: "{{ bushels|int - price|int }}"
+- block:
+    - name: Pay the landlords in bushels.
+      set_fact:
+        bushels: "{{ bushels|int - price|int }}"
 
-- name: And grab their land.
-  set_fact:
-    acres: "{{ acres|int + action.user_input|int }}"
+    - name: And grab their land.
+      set_fact:
+        acres: "{{ acres|int + action.user_input|int }}"
+  when: action.user_input|int > 0
