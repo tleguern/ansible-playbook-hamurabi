@@ -1,0 +1,90 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no
+  vars:
+    interactive: no
+  tasks:
+    - include_tasks: ../../init.yml
+
+    - name: Let the population grow to 100 people.
+      set_fact:
+        population: 100
+
+    - name: Give the order to feed 0 people.
+      set_fact:
+        action: { "user_input": 0 }
+    - block:
+        - include_tasks: ../../feed-people.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Starving everyone is a valid choice, even if it is evil."
+    - assert:
+        that:
+          - bushels|int == 2800
+          - population|int == 100
+          - starved|int == 100
+
+    - name: Reset population, bushels and starved counters.
+      set_fact:
+        population: 100
+        bushels: 2800
+        starved: 0
+
+    - name: Give the order to feed 50 people.
+      set_fact:
+        action: { "user_input": 1000 }
+    - block:
+        - include_tasks: ../../feed-people.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Feeding half of the population even if there are enough bushels for everyone is cruel bit valid."
+    - assert:
+        that:
+          - bushels|int == 1800
+          - population|int == 100
+          - starved|int == 50
+
+    - name: Reset population, bushels and starved counters.
+      set_fact:
+        population: 100
+        bushels: 2800
+        starved: 0
+
+    - name: Give the order to feed 100 people.
+      set_fact:
+        action: { "user_input": 2000 }
+    - block:
+        - include_tasks: ../../feed-people.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Feeding everyone is the best option and is valid."
+    - assert:
+        that:
+          - bushels|int == 800
+          - population|int == 100
+          - starved|int == 0
+
+    - name: Reset population, bushels and starved counters.
+      set_fact:
+        population: 100
+        bushels: 1000
+        starved: 0
+
+    - name: Give the order to feed 100 people but there are not enough bushels.
+      set_fact:
+        action: { "user_input": 2000 }
+    - block:
+        - include_tasks: ../../feed-people.yml
+      rescue:
+        - name: The game correctly detected there was not enough bushels.
+          assert:
+            that: action_failed.failed
+    - assert:
+        that:
+          - bushels|int == 1000
+          - population|int == 100
+          - starved|int == 0

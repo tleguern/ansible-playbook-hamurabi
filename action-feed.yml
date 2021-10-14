@@ -1,0 +1,8 @@
+---
+- pause:
+    prompt: |
+      How many bushels do you wish to feed your people?
+      No starvation: {{ population|int * 20 }} bushels.
+  register: feed
+
+

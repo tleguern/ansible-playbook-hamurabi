@@ -1,30 +1,23 @@
 ---
-- pause:
-    prompt: |
-      How many bushels do you wish to feed your people?
-      No starvation: {{ population|int * 20 }} bushels.
-  register: feed
+- include_tasks: action-feed.yml
+  when: interactive
 
-- name: Check user input for stupid answers.
-  fail:
-    msg: |
-      Hamurabi: I cannot do what you wish.
-      Get yourself another steward!
-  when:
-    - feed.user_input is not integer
-    - feed.user_input|int < 0
+- include_tasks: user-input-check.yml
 
 - name: Nope.
-  debug:
+  fail:
     msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
-  when: feed.user_input|int > bushels|int
+  register: action_failed
+  ignore_errors: "{{ interactive }}"
+  when: action.user_input|int > bushels|int
 
 - name: Try again Hamurabi.
   include_tasks: feed-people.yml
-  when: feed.user_input|int > bushels|int
+  when:
+    - action.user_input|int > bushels|int
+    - interactive
 
 - name: Feed the population # 20 bushels per person
   set_fact:
-    bushels: "{{ bushels|int - feed.user_input|int }}"
-    starved: "{{ population|int - (feed.user_input|int / 20)|int }}"
-  when: feed.user_input|int <= bushels|int
+    bushels: "{{ bushels|int - action.user_input|int }}"
+    starved: "{{ population|int - (action.user_input|int / 20)|int }}"
