@@ -1,37 +1,32 @@
 ---
-- name: How many acres do you wish to sell?
-  pause:
-    prompt: "How many acres do you wish to sell?"
-  register: sell
+- include_tasks: action-sell.yml
+  when: interactive
 
-- name: Check user input for stupid answers.
-  fail:
-    msg: |
-      Hamurabi: I cannot do what you wish.
-      Get yourself another steward!
-  when:
-    - sell.user_input is not integer
-    - sell.user_input|int < 0
+- include_tasks: user-input-check.yml
 
 - name: Calculate total price.
   set_fact:
-    price: "{{ landrate|int * sell.user_input|int }}"
+    price: "{{ landrate|int * action.user_input|int }}"
 
 - name: Nope.
-  debug:
-    msg: "Hamurabi: Think again. You have only {{ bushels }} acres."
-  when: sell.user_input|int > acres|int
+  fail:
+    msg: "Hamurabi: Think again. You have only {{ acres }} acres."
+  register: action_failed
+  ignore_errors: "{{ interactive }}"
+  when: action.user_input|int > acres|int
 
 - name: Try again Hamurabi.
   include_tasks: sell-acres.yml
-  when: sell.user_input|int > acres|int
+  when:
+    - action.user_input|int > acres|int
+    - interactive
 
 - block:
     - name: Sell the land, pride of our nation.
       set_fact:
-        acres: "{{ acres|int - sell.user_input|int }}"
+        acres: "{{ acres|int - action.user_input|int }}"
 
     - name: And grab the bushels.
       set_fact:
         bushels: "{{ bushels|int + price|int }}"
-  when: sell.user_input|int <= acres|int
+  when: action.user_input|int > 0

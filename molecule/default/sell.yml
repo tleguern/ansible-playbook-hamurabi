@@ -1,0 +1,72 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no
+  vars:
+    interactive: no
+  tasks:
+    - include_tasks: ../../init.yml
+
+    - name: Edict that the fair price of land should be no more than 20.
+      set_fact:
+        landrate: 20
+
+    - name: Give the order to sell 0 acres of land.
+      set_fact:
+        action: { "user_input": 0 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Selling 0 acre of land is a valid choice."
+    - assert:
+        that:
+          - acres|int == 1000
+          - bushels|int == 2800
+          - population|int == 95
+
+    - name: Give the order to sell 10 acres of land for 200 bushels.
+      set_fact:
+        action: { "user_input": 10 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Selling 10 acre of land is a valid choice."
+    - assert:
+        that:
+          - acres|int == 990
+          - bushels|int == 3000
+          - population|int == 95
+
+    - name: Give the order to sell 1000 acres of land for 20000 bushels.
+      set_fact:
+        action: { "user_input": 1000 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: The game correctly detected there was not enough acres.
+          assert:
+            that: action_failed.failed
+    - assert:
+        that:
+          - acres|int == 990
+          - bushels|int == 3000
+          - population|int == 95
+
+    - name: Ok steward, calm down and let's sell 130 acres of land for 2600 bushels instead.
+      set_fact:
+        action: { "user_input": 130 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Selling 130 acre of land is a valid choice."
+    - assert:
+        that:
+          - acres|int == 860
+          - bushels|int == 5600
+          - population|int == 95

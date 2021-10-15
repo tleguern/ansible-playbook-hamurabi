@@ -1,0 +1,5 @@
+---
+- name: How many acres do you wish to sell?
+  pause:
+    prompt: "How many acres do you wish to sell?"
+  register: action
