@@ -1,0 +1,6 @@
+---
+- pause:
+    prompt: |
+      How many acres do you wish to plant with seed?
+      MAX {{ population|int * 10 }} acres.
+  register: action

@@ -6,4 +6,6 @@
 
 - import_playbook: user-input.yml
 - import_playbook: buy.yml
+- import_playbook: sell.yml
 - import_playbook: feed.yml
+- import_playbook: plant.yml

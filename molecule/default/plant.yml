@@ -1,0 +1,65 @@
+---
+- hosts: all
+  become: no
+  gather_facts: no
+  vars:
+    interactive: no
+  tasks:
+    - include_tasks: ../../init.yml
+
+    - name: Create a world with specifc parameters.
+      set_fact:
+        acres: 100
+        population: 100
+        planted: 0
+
+    - name: Give the order to plant 0 acres of land.
+      set_fact:
+        action: { "user_input": 0 }
+    - block:
+        - include_tasks: ../../plant-seed.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Planting 0 acre of land is a valid choice."
+    - assert:
+        that:
+          - acres|int == 100
+          - population|int == 100
+          - planted|int == 0
+
+    - name: Give the order to plant more acres of land than we have.
+      set_fact:
+        action: { "user_input": 101 }
+    - block:
+        - include_tasks: ../../plant-seed.yml
+      rescue:
+        - name: The game correctly detected there was not enough acres.
+          assert:
+            that: action_failed.failed
+    - assert:
+        that:
+          - acres|int == 100
+          - population|int == 100
+          - planted|int == 0
+
+    - name: Change the world's parameters.
+      set_fact:
+        acres: 10000
+        population: 100
+        planted: 0
+
+    - name: It takes one person to plow ten acres, try to plant just more than what's possible.
+      set_fact:
+        action: { "user_input": 1001 }
+    - block:
+        - include_tasks: ../../plant-seed.yml
+      rescue:
+        - name: The game correctly detected there was not enough people.
+          assert:
+            that: action_failed.failed
+    - assert:
+        that:
+          - acres|int == 10000
+          - population|int == 100
+          - planted|int == 0
