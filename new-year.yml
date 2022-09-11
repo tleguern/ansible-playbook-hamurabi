@@ -1,0 +1,4 @@
+---
+- name: Start a new year.
+  set_fact:
+    year: "{{ year|int + 1 }}"

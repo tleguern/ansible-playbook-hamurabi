@@ -1,0 +1,15 @@
+---
+- fail:
+    msg: |
+      You starved {{ starved }} people in one year!
+      Due to this extreme mismanagement you have not only
+      been impeached and thrown out of office but you have
+      also been declared national fink.
+
+      So long for now.
+  when: "starved|int > population|int * 45 / 100"
+
+- name: Evacuate the corpses of the famished outside the city wall.
+  set_fact:
+    population: "{{ population|int - starved|int }}"
+    # TODO: Compter le nombre total de mort ici.

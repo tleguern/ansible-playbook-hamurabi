@@ -1,0 +1,49 @@
+---
+- debug:
+    msg: |
+      In your 10-year term of office, {{ percent }}% of the
+      population starved per year on the average, i.e. a total of
+      {{ dead }} people died!
+      you started with 10 acres per person and ended with
+      {{ acres_ratio }} acres per person.
+
+- fail:
+    msg: |
+      Due to this extreme mismanagement you have not only
+      been impeached and thrown out of office but you have
+      also been declared national fink.
+
+      So long for now.
+  when:
+    - acres_ratio|int < 7
+  ignore_errors: yes
+
+- debug:
+    msg: |
+      Your heavy-handed performance smacks of Nero and Ivan IV.
+      the people (remianing) find you an unpleasant ruler, and,
+      frankly, hate your guts!
+
+      So long for now.
+  when:
+    - acres_ratio|int >= 7 and acres_ratio|int < 9
+
+- debug:
+    msg: |
+      Your performance could have been somewhat better, but
+      really wasn't too bad at all. int(p*.8*rnd(1)) people
+      would dearly like to see you assassinated but we all have our
+      trivial problems.
+
+      So long for now.
+  when:
+    - acres_ratio|int >= 9 and acres_ratio|int < 10
+
+- debug:
+    msg: |
+      A fantastic performance! Charlemange, Disraeli, and
+      Jefferson combined could not have done better!
+
+      So long for now.
+  when:
+    - acres_ratio|int >= 10

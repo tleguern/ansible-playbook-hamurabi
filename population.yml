@@ -1,0 +1,17 @@
+---
+- name: Was there a plague during the year?
+  set_fact:
+    plague: "{{ (100|random(start=1) <= 15) | ternary(True, False) }}"
+  when:
+    - year|int > 0
+    - year|int < 11
+    - interactive
+
+- name: Half of the population die.
+  set_fact:
+    population: "{{ population|int / 2 }}"
+  when: plague
+
+- name: Welcome the new citzens.
+  set_fact:
+    population: "{{ population|int + newcitizens|int }}"

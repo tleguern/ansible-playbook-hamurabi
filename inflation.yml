@@ -1,0 +1,5 @@
+---
+- name: Adjust landrate.
+  set_fact:
+    landrate: "{{ 17 + (10|random(start=1)) }}"
+  when: interactive

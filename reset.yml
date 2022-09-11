@@ -1,0 +1,7 @@
+---
+- name: Reset some counters.
+  set_fact:
+    action: 0
+    newcitizens: 0
+    planted: 0
+    starved: 0

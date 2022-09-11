@@ -1,0 +1,31 @@
+---
+# Chances are between 1 to 6 included.
+- name: Calculate this year's yield.
+  set_fact:
+    give: "{{ ((101|random(start=1) * 5) / 100)|round(0, 'floor')|int + 1 }}"
+    rats_chance: "{{ ((101|random(start=1) * 5) / 100)|round(0, 'floor')|int + 1 }}"
+  when: interactive
+
+- name: Bountiful harvest.
+  set_fact:
+    harvest: "{{ give|int * planted|int }}"
+    rats: 0
+
+- name: Rats are running wild.
+  set_fact:
+    rats: "{{ (bushels|int / rats_chance|int)|round(0, 'floor')|int }}"
+  when: (rats_chance|int % 2) is even
+
+- name: Harvest the hard earned bushels.
+  set_fact:
+    bushels: "{{ bushels|int + harvest|int }}"
+
+- name: Rats invaded the granaries at night.
+  set_fact:
+    bushels: "{{ bushels|int - rats|int }}"
+  when: rats|int > 0
+
+- name: There are no bushels left in the granaries!
+  set_fact:
+    bushels: 0
+  when: bushels|int <= 0

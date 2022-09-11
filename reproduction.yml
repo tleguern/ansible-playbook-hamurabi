@@ -1,0 +1,9 @@
+---
+- name: Calculate this year's reproduction rate.
+  set_fact:
+    babies_chance: "{{ ((101|random(start=1) * 5) / 100)|round(0, 'floor')|int + 1 }}"
+  when: interactive
+
+- name: Count the number of freshly made citizens at the end of the year.
+  set_fact:
+    newcitizens: "{{ (babies_chance|int * (20 * acres|int + bushels|int) / population|int / 100 + 1)|float|round(0, 'floor')|int }}"

@@ -11,8 +11,8 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int > acres|int
-    - action.user_input|int <= 10 * population|int
-    - action.user_input|int <= bushels|int
+    - action.user_input|int < 10 * population|int
+    - (action.user_input|int / 2) <= bushels|int
 
 - name: Nope.
   fail:
@@ -21,8 +21,8 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int <= acres|int
-    - action.user_input|int > 10 * population|int
-    - action.user_input|int <= bushels|int
+    - action.user_input|int >= 10 * population|int
+    - (action.user_input|int / 2) <= bushels|int
 
 - name: Nope.
   fail:
@@ -31,8 +31,8 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int <= acres|int
-    - action.user_input|int <= 10 * population|int
-    - action.user_input|int > bushels|int
+    - action.user_input|int < 10 * population|int
+    - (action.user_input|int / 2) > bushels|int
 
 - name: Try again Hamurabi.
   include_tasks: plant-seed.yml
@@ -43,6 +43,6 @@
 
 - name: Plant the seeds.
   set_fact:
-    bushels: "{{ bushels|int - action.user_input|int }}"
+    bushels: "{{ bushels|int - (action.user_input|int / 2)|round(0, 'floor')|int }}"
     planted: "{{ action.user_input|int }}"
   when: action.user_input|int > 0
