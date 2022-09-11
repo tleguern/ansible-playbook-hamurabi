@@ -4,8 +4,6 @@ This project is attempt to bring the text-based strategy game of [Hamurabi](http
 
 The goal is to govern the Ancient Sumeria for a duration of 10 years, feeding your people while keeping the number of famished low.
 
-This project is not finished yet.
-
 ## How to play
 
 The following packages are necessary:
