@@ -24,7 +24,7 @@
         that:
           - acres|int == 1000
           - bushels|int == 2800
-          - population|int == 95
+          - population|int == 100
 
     - name: Give the order to sell 10 acres of land for 200 bushels.
       set_fact:
@@ -39,7 +39,7 @@
         that:
           - acres|int == 990
           - bushels|int == 3000
-          - population|int == 95
+          - population|int == 100
 
     - name: Give the order to sell 1000 acres of land for 20000 bushels.
       set_fact:
@@ -54,7 +54,7 @@
         that:
           - acres|int == 990
           - bushels|int == 3000
-          - population|int == 95
+          - population|int == 100
 
     - name: Ok steward, calm down and let's sell 130 acres of land for 2600 bushels instead.
       set_fact:
@@ -69,4 +69,4 @@
         that:
           - acres|int == 860
           - bushels|int == 5600
-          - population|int == 95
+          - population|int == 100

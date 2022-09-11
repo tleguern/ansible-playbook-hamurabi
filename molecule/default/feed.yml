@@ -7,10 +7,6 @@
   tasks:
     - include_tasks: ../../init.yml
 
-    - name: Let the population grow to 100 people.
-      set_fact:
-        population: 100
-
     - name: Give the order to feed 0 people.
       set_fact:
         action: { "user_input": 0 }
@@ -40,7 +36,7 @@
       rescue:
         - name: This task should not be executed.
           fail:
-            msg: "Feeding half of the population even if there are enough bushels for everyone is cruel bit valid."
+            msg: "Feeding half of the population even if there are enough bushels for everyone is cruel but valid."
     - assert:
         that:
           - bushels|int == 1800

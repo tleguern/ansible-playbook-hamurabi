@@ -10,7 +10,6 @@
     - name: Create a world with specifc parameters.
       set_fact:
         acres: 100
-        population: 100
         planted: 0
 
     - name: Give the order to plant 0 acres of land.
@@ -46,7 +45,6 @@
     - name: Change the world's parameters.
       set_fact:
         acres: 10000
-        population: 100
         planted: 0
 
     - name: It takes one person to plow ten acres, try to plant just more than what's possible.
