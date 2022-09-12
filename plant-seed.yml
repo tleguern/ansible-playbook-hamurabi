@@ -4,45 +4,32 @@
 
 - include_tasks: user-input-check.yml
 
-- name: Nope.
-  fail:
-    msg: "Hamurabi: Think again. You have only {{ acres }} acres."
-  register: action_failed
-  ignore_errors: "{{ interactive }}"
-  when:
-    - action.user_input|int > acres|int
-    - action.user_input|int <= 10 * population|int
-    - (action.user_input|int / 2) <= bushels|int
+- block:
+    - fail:
+        msg: "Hamurabi: Think again. You have only {{ acres }} acres."
+      register: action_failed
+      when: action.user_input|int > acres|int
 
-- name: Nope.
-  fail:
-    msg: "Hamurabi: Think again. You have only {{ population }} people to tend the fields."
-  register: action_failed
-  ignore_errors: "{{ interactive }}"
-  when:
-    - action.user_input|int <= acres|int
-    - action.user_input|int > 10 * population|int
-    - (action.user_input|int / 2) <= bushels|int
+    - fail:
+        msg: "Hamurabi: Think again. You have only {{ population }} people to tend the fields."
+      register: action_failed
+      when:
+        - action.user_input|int > 10 * population|int
+        - action_failed.failed is not defined or not action_failed.failed
 
-- name: Nope.
-  fail:
-    msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
-  register: action_failed
-  ignore_errors: "{{ interactive }}"
-  when:
-    - action.user_input|int <= acres|int
-    - action.user_input|int <= 10 * population|int
-    - (action.user_input|int / 2) > bushels|int
+    - fail:
+        msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
+      register: action_failed
+      when:
+        - (action.user_input|int / 2) > bushels|int
+        - action_failed.failed is not defined or not action_failed.failed
 
-- name: Try again Hamurabi.
-  include_tasks: plant-seed.yml
-  when:
-    - action_failed.failed is defined
-    - action_failed.failed
-    - interactive
-
-- name: Plant the seeds.
-  set_fact:
-    bushels: "{{ bushels|int - (action.user_input|int / 2)|round(0, 'floor')|int }}"
-    planted: "{{ action.user_input|int }}"
-  when: action.user_input|int > 0
+    - name: Plant the seeds.
+      set_fact:
+        bushels: "{{ bushels|int - (action.user_input|int / 2)|round(0, 'floor')|int }}"
+        planted: "{{ action.user_input|int }}"
+      when: action_failed.failed is not defined or not action_failed.failed
+  rescue:
+    - name: Try again Hamurabi.
+      include_tasks: plant-seed.yml
+      when: interactive

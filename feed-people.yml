@@ -4,20 +4,18 @@
 
 - include_tasks: user-input-check.yml
 
-- name: Nope.
-  fail:
-    msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
-  register: action_failed
-  ignore_errors: "{{ interactive }}"
-  when: action.user_input|int > bushels|int
+- block:
+    - fail:
+        msg: "Hamurabi: Think again. You have only {{ bushels }} bushels of grain."
+      register: action_failed
+      when: action.user_input|int > bushels|int
 
-- name: Try again Hamurabi.
-  include_tasks: feed-people.yml
-  when:
-    - action.user_input|int > bushels|int
-    - interactive
-
-- name: Feed the population # 20 bushels per person
-  set_fact:
-    bushels: "{{ bushels|int - action.user_input|int }}"
-    starved: "{{ population|int - (action.user_input|int / 20)|round(0, 'floor')|int }}"
+    - name: Feed the population # 20 bushels per person
+      set_fact:
+        bushels: "{{ bushels|int - action.user_input|int }}"
+        starved: "{{ population|int - (action.user_input|int / 20)|round(0, 'floor')|int }}"
+      when: action_failed.failed is not defined or not action_failed.failed
+  rescue:
+    - name: Try again Hamurabi.
+      include_tasks: feed-people.yml
+      when: interactive

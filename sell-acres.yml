@@ -8,25 +8,22 @@
   set_fact:
     price: "{{ landrate|int * action.user_input|int }}"
 
-- name: Nope.
-  fail:
-    msg: "Hamurabi: Think again. You have only {{ acres }} acres."
-  register: action_failed
-  ignore_errors: "{{ interactive }}"
-  when: action.user_input|int > acres|int
-
-- name: Try again Hamurabi.
-  include_tasks: sell-acres.yml
-  when:
-    - action.user_input|int > acres|int
-    - interactive
-
 - block:
-    - name: Sell the land, pride of our nation.
-      set_fact:
-        acres: "{{ acres|int - action.user_input|int }}"
+    - fail:
+        msg: "Hamurabi: Think again. You have only {{ acres }} acres."
+      register: action_failed
+      when: action.user_input|int > acres|int
 
-    - name: And grab the bushels.
-      set_fact:
-        bushels: "{{ bushels|int + price|int }}"
-  when: action.user_input|int > 0
+    - block:
+        - name: Sell the land, pride of our nation.
+          set_fact:
+            acres: "{{ acres|int - action.user_input|int }}"
+
+        - name: And grab the bushels.
+          set_fact:
+            bushels: "{{ bushels|int + price|int }}"
+      when: action_failed.failed is not defined or not action_failed.failed
+  rescue:
+    - name: Try again Hamurabi.
+      include_tasks: sell-acres.yml
+      when: interactive
