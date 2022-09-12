@@ -41,4 +41,4 @@
 - include_tasks: new-year.yml
 
 - include_tasks: hamurabi-tasks.yml
-  when: year != 11
+  when: year|int < 11
