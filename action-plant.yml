@@ -2,5 +2,5 @@
 - pause:
     prompt: |
       How many acres do you wish to plant with seed?
-      MAX {{ population|int * 10 }} acres.
+      MAX {{ [ population|int * 10, bushels|int * 2, acres|int ] | map('int') | sort | first }} acres.
   register: action
