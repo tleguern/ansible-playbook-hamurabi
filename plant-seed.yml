@@ -11,7 +11,7 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int > acres|int
-    - action.user_input|int < 10 * population|int
+    - action.user_input|int <= 10 * population|int
     - (action.user_input|int / 2) <= bushels|int
 
 - name: Nope.
@@ -21,7 +21,7 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int <= acres|int
-    - action.user_input|int >= 10 * population|int
+    - action.user_input|int > 10 * population|int
     - (action.user_input|int / 2) <= bushels|int
 
 - name: Nope.
@@ -31,7 +31,7 @@
   ignore_errors: "{{ interactive }}"
   when:
     - action.user_input|int <= acres|int
-    - action.user_input|int < 10 * population|int
+    - action.user_input|int <= 10 * population|int
     - (action.user_input|int / 2) > bushels|int
 
 - name: Try again Hamurabi.

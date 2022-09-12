@@ -44,12 +44,13 @@
 
     - name: Change the world's parameters.
       set_fact:
-        acres: 10000
+        acres: 200
+        population: 10
         planted: 0
 
-    - name: It takes one person to plow ten acres, try to plant just more than what's possible.
+    - name: It takes one person to plow ten acres, try to plant more than what's possible.
       set_fact:
-        action: { "user_input": 1001 }
+        action: { "user_input": 200 }
     - block:
         - include_tasks: ../../plant-seed.yml
       rescue:
@@ -58,6 +59,29 @@
             that: action_failed.failed
     - assert:
         that:
-          - acres|int == 10000
-          - population|int == 100
+          - acres|int == 200
+          - population|int == 10
+          - planted|int == 0
+
+    - name: Change the world's parameters.
+      set_fact:
+        acres: 100
+        bushels: 25
+        population: 10
+        planted: 0
+
+    - name: One bushel can be used to plant two acres, try to plant more than what's possible.
+      set_fact:
+        action: { "user_input": 100 }
+    - block:
+        - include_tasks: ../../plant-seed.yml
+      rescue:
+        - name: The game correctly detected there was not enough bushels.
+          assert:
+            that: action_failed.failed
+    - assert:
+        that:
+          - acres|int == 100
+          - population|int == 10
+          - bushels|int == 25
           - planted|int == 0
