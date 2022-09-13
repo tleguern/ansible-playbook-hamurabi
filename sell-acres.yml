@@ -12,7 +12,7 @@
     - fail:
         msg: "Hamurabi: Think again. You have only {{ acres }} acres."
       register: action_failed
-      when: action.user_input|int > acres|int
+      when: action.user_input|int > acres|int - 1
 
     - block:
         - name: Sell the land, pride of our nation.

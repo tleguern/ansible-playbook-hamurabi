@@ -70,3 +70,33 @@
           - acres|int == 860
           - bushels|int == 5600
           - population|int == 100
+
+    - name: Try and fail to sell the exact amount of acres we own.
+      set_fact:
+        action: { "user_input": 860 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: The game correctly detected there should be always at least one acre left.
+          fail:
+            msg: "Selling all the acres of land is a not ok."
+    - assert:
+        that:
+          - acres|int == 860
+          - bushels|int == 5600
+          - population|int == 100
+
+    - name: Ok, what about just keeping one ?
+      set_fact:
+        action: { "user_input": 859 }
+    - block:
+        - include_tasks: ../../sell-acres.yml
+      rescue:
+        - name: This task should not be executed.
+          fail:
+            msg: "Keeping only one acre is valid"
+    - assert:
+        that:
+          - acres|int == 1
+          - bushels|int == 22780
+          - population|int == 100
