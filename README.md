@@ -44,7 +44,6 @@ $ molecule converge
 
 Here is a list of features yet to be implemented:
 
-- Count the number of poor souls who starved due to the player negligence.
 - Implement a system to provide a seed to improve testing.
 
 ## Caveats

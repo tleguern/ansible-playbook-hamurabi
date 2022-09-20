@@ -12,4 +12,4 @@
 - name: Evacuate the corpses of the famished outside the city wall.
   set_fact:
     population: "{{ population|int - starved|int }}"
-    # TODO: Compter le nombre total de mort ici.
+    dead: "{{ dead|int + starved|int }}"

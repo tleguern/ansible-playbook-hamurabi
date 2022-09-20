@@ -17,6 +17,4 @@
 
     - include_tasks: end-game.yml
       vars:
-        percent: TODO
-        dead: TODO
         acres_ratio: "{{ (acres|int / population|int)|round|int }}"

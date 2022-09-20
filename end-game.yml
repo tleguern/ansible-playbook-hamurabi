@@ -1,10 +1,8 @@
 ---
 - debug:
     msg: |
-      In your 10-year term of office, {{ percent }}% of the
-      population starved per year on the average, i.e. a total of
-      {{ dead }} people died!
-      you started with 10 acres per person and ended with
+      In your 10-year term of office a total of {{ dead }} people died!
+      You started with 10 acres per person and ended with
       {{ acres_ratio }} acres per person.
 
 - fail:
@@ -31,7 +29,7 @@
 - debug:
     msg: |
       Your performance could have been somewhat better, but
-      really wasn't too bad at all. int(p*.8*rnd(1)) people
+      really wasn't too bad at all. A few people
       would dearly like to see you assassinated but we all have our
       trivial problems.
 
