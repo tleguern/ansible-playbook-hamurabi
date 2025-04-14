@@ -33,11 +33,13 @@ Note: testing requires `molecule` as an additional dependency.
 
 There is only one testing scenario right now, which tests player actions and their limits such as trying to sell too much land, planting crops without enough seeds, etc.
 
-To run it:
+As with any python projects how to install the required packages change every season or so.
+The following incantation worked for me:
 
 ```sh
-$ molecule converge
-...
+$ python3 -m venv venv
+$ ./venv/bin/pip3 install ansible-dev-tools
+$ ./venv/bin/molecule converge
 ```
 
 ## TODO
